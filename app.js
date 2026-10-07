@@ -109,6 +109,11 @@ function optionalNum(...values){
   }
   return null;
 }
+function boolValue(value){
+  if(value===true||value===1||value==="1")return true;
+  if(value===false||value===0||value==="0"||String(value).toLowerCase()==="false")return false;
+  return Boolean(value);
+}
 function normalizeRole(value){
   const role=String(value||"").toUpperCase();
   if(role==="MIDDLE")return"MID";
@@ -145,7 +150,7 @@ function normalizeMatch(raw,index){
   const placement=optionalNum(raw?.placement);
   return {
     id:String(raw?.id||raw?.matchId||raw?.metadata?.matchId||"match-"+index),
-    win:Boolean(p.win??raw?.win),
+    win:boolValue(p.win??raw?.win),
     champion:String(p.champion||p.championName||raw?.champion||raw?.championName||"—"),
     position:normalizeRole(p.position||p.teamPosition||raw?.position||raw?.teamPosition),
     queue:String(raw?.queue||raw?.queueName||raw?.gameMode||"—"),
