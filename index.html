@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#0d1117">
+  <meta name="description" content="LoL Loss Explorer organiza suas derrotas recentes e compara padrões pessoais de campeão, rota, duração, KDA, mortes, farm e visão.">
+  <meta name="robots" content="index,follow,max-image-preview:large">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="LoL Loss Explorer — revise padrões das suas derrotas">
+  <meta property="og:description" content="Compare suas derrotas com suas vitórias recentes sem transformar correlação em culpa ou causalidade.">
+  <meta property="og:url" content="https://helioconde.github.io/lol-loss-explorer/">
+  <link rel="canonical" href="https://helioconde.github.io/lol-loss-explorer/">
+  <link rel="alternate" hreflang="pt-BR" href="https://helioconde.github.io/lol-loss-explorer/">
+  <link rel="alternate" hreflang="en" href="https://helioconde.github.io/lol-loss-explorer/?lang=en">
+  <link rel="alternate" hreflang="x-default" href="https://helioconde.github.io/lol-loss-explorer/">
+  <title>LoL Loss Explorer — padrões das suas derrotas</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="./"><span class="brand-mark">LX</span><span>Loss <b>Explorer</b></span></a>
+    <div class="top-actions">
+      <span class="source-pill" data-i18n="riotData">DADOS RIOT</span>
+      <button id="language-toggle" class="ghost small" type="button">EN</button>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero shell">
+      <div>
+        <p class="eyebrow" data-i18n="eyebrow">LEAGUE OF LEGENDS · REVISÃO DE DERROTAS</p>
+        <h1 data-i18n="heroTitle">Perder uma partida é resultado. <span>Repetir um padrão é dado para revisar.</span></h1>
+        <p data-i18n="heroText">Agrupe suas derrotas recentes por campeão, rota e duração e compare métricas com suas próprias vitórias da mesma amostra — sem chamar correlação de “causa da derrota”.</p>
+
+        <form id="lookup-form" class="lookup">
+          <label><span data-i18n="riotId">Riot ID</span><input id="riot-id" placeholder="AlchemyFlames#BR1" autocomplete="off" required></label>
+          <label><span data-i18n="server">Servidor</span><select id="server"><option value="br1">BR</option><option value="na1">NA</option><option value="euw1">EUW</option><option value="eun1">EUNE</option><option value="kr">KR</option><option value="jp1">JP</option><option value="la1">LAN</option><option value="la2">LAS</option><option value="oc1">OCE</option></select></label>
+          <button class="primary" type="submit" data-i18n="analyze">Explorar minhas derrotas</button>
+        </form>
+        <div id="status" class="status" role="status" aria-live="polite"></div>
+      </div>
+
+      <aside class="hero-card">
+        <p class="eyebrow" data-i18n="methodEyebrow">MÉTODO</p>
+        <article><b>01</b><div><strong data-i18n="method1">Separar</strong><span data-i18n="method1Text">vitórias e derrotas da mesma amostra</span></div></article>
+        <article><b>02</b><div><strong data-i18n="method2">Comparar</strong><span data-i18n="method2Text">métricas pessoais, não médias globais</span></div></article>
+        <article><b>03</b><div><strong data-i18n="method3">Revisar</strong><span data-i18n="method3Text">padrões recorrentes com evidência suficiente</span></div></article>
+      </aside>
+    </section>
+
+    <section id="loading" class="loading shell" hidden><div class="spinner"></div><div><strong data-i18n="loadingTitle">Consultando suas partidas recentes…</strong><span data-i18n="loadingText">O backend carrega até 40 partidas elegíveis.</span></div></section>
+
+    <section id="result" class="result shell" hidden>
+      <div class="result-head">
+        <div><p class="eyebrow" data-i18n="analysis">LOSS EXPLORER</p><h2 id="player-name">—</h2><p id="sample-note" class="muted"></p></div>
+        <div class="period-tabs"><button class="period" type="button" data-period="week">7D</button><button class="period active" type="button" data-period="month">30D</button><button class="period" type="button" data-period="recent" data-i18n="recent40">40 recentes</button></div>
+      </div>
+
+      <section class="metrics">
+        <article><span data-i18n="matches">Partidas</span><strong id="metric-games">—</strong><small data-i18n="inSample">na amostra</small></article>
+        <article><span data-i18n="losses">Derrotas</span><strong id="metric-losses">—</strong><small id="metric-loss-rate">—</small></article>
+        <article><span data-i18n="avgDeaths">Mortes médias</span><strong id="metric-deaths">—</strong><small data-i18n="inLosses">nas derrotas</small></article>
+        <article><span data-i18n="avgKda">KDA médio</span><strong id="metric-kda">—</strong><small data-i18n="inLosses">nas derrotas</small></article>
+      </section>
+
+      <section class="compare-grid">
+        <article class="panel comparison-panel">
+          <div class="panel-head"><div><p class="eyebrow" data-i18n="compareEyebrow">DERROTAS × VITÓRIAS</p><h3 data-i18n="compareTitle">Como suas métricas mudam na mesma amostra?</h3></div><span id="comparison-confidence" class="confidence-badge">—</span></div>
+          <div id="comparison-table" class="comparison-table"></div>
+          <p class="method-note" data-i18n="noCausality">Uma diferença entre derrotas e vitórias não prova a causa do resultado. Use como ponto de revisão.</p>
+        </article>
+
+        <aside class="panel duration-panel">
+          <div class="panel-head"><div><p class="eyebrow" data-i18n="durationEyebrow">DURAÇÃO DAS DERROTAS</p><h3 data-i18n="durationTitle">Quando elas terminam?</h3></div></div>
+          <div id="duration-buckets" class="duration-buckets"></div>
+        </aside>
+      </section>
+
+      <section class="pattern-grid">
+        <article class="panel">
+          <div class="panel-head"><div><p class="eyebrow" data-i18n="championsEyebrow">CAMPEÕES</p><h3 data-i18n="championsTitle">Onde as derrotas se repetem</h3></div></div>
+          <div id="champion-patterns" class="pattern-list"></div>
+        </article>
+        <article class="panel">
+          <div class="panel-head"><div><p class="eyebrow" data-i18n="rolesEyebrow">ROTAS</p><h3 data-i18n="rolesTitle">Amostra por função</h3></div></div>
+          <div id="role-patterns" class="pattern-list"></div>
+        </article>
+      </section>
+
+      <section class="panel signals-panel">
+        <div class="panel-head"><div><p class="eyebrow" data-i18n="signalsEyebrow">SINAIS PARA REVISAR</p><h3 data-i18n="signalsTitle">Padrões recorrentes da sua própria amostra</h3></div><span id="signal-confidence" class="confidence-badge">—</span></div>
+        <div id="signals-list" class="signals-list"></div>
+      </section>
+
+      <section class="panel recent-panel">
+        <div class="panel-head"><div><p class="eyebrow" data-i18n="recentLossesEyebrow">DERROTAS RECENTES</p><h3 data-i18n="recentLossesTitle">Partidas usadas nesta revisão</h3></div></div>
+        <div id="loss-list" class="loss-list"></div>
+      </section>
+
+      <aside class="ad-slot"><span data-i18n="ad">PUBLICIDADE</span><small data-i18n="adNote">espaço reservado · fora da análise principal</small></aside>
+    </section>
+  </main>
+
+  <footer class="footer shell">
+    <div><strong>LoL Loss Explorer</strong><span data-i18n="disclaimer">Produto independente. League of Legends e Riot Games são marcas da Riot Games, Inc.</span></div>
+    <nav><a href="sobre.html" data-i18n="about">Sobre</a><a href="privacidade.html" data-i18n="privacy">Privacidade</a><a href="termos.html" data-i18n="terms">Termos</a></nav>
+  </footer>
+
+  <script src="backend-config.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
