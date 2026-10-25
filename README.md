@@ -1,34 +1,48 @@
-# LoL Loss Explorer — Aprenda com suas derrotas
+<div align="center">
+  <h1>📉 LoL Loss Explorer</h1>
+  <p><strong>Transforme derrotas recentes de League of Legends em perguntas melhores para sua próxima revisão.</strong></p>
+  <p><img alt="Status" src="https://img.shields.io/badge/status-MVP%20experimental-64748b"> <img alt="JavaScript" src="https://img.shields.io/badge/JavaScript-Web-F7DF1E?logo=javascript&logoColor=black"></p>
+</div>
 
-**Revise padrões de partidas perdidas em League of Legends comparando suas próprias vitórias e derrotas recentes.**
+## A proposta
 
-![JavaScript](https://img.shields.io/badge/JavaScript-web-F7DF1E?logo=javascript&logoColor=black) ![Status](https://img.shields.io/badge/status-MVP%20experimental-64748b)
+Em vez de culpar uma partida isolada, o **Loss Explorer** compara **derrotas e vitórias** recentes da sua própria conta e destaca diferenças observáveis de desempenho para orientar uma revisão.
 
-## O que a ferramenta analisa
+## O que você encontra
 
-- Busca por Riot ID e servidor.
-- Recorte de até 40 partidas elegíveis no backend.
-- Comparações de KDA, mortes, farm por minuto e visão por minuto.
-- Distribuição das derrotas por campeão, rota e duração.
-- Sinais recorrentes, sempre contextualizados pelo tamanho da amostra.
-- Interface em português e inglês, com estados de erro e sem chave Riot no navegador.
+| Área | Leitura |
+| --- | --- |
+| **Busca** | Riot ID e servidor |
+| **Recorte** | Até 40 partidas elegíveis retornadas pelo backend |
+| **Indicadores** | KDA, mortes, farm/minuto e visão/minuto |
+| **Contexto** | Campeão, rota e duração das derrotas |
+| **Padrões** | Diferenças recorrentes com indicação da amostra |
+| **Idiomas** | Português e inglês |
 
-## Como explorar
+A interpretação correta é **descritiva, não causal**. Uma diferença de KDA não comprova por que alguém perdeu; mapa, draft, objetivos e decisões continuam relevantes. Amostras pequenas devem ser tratadas com cautela.
 
-Este repositório contém uma aplicação web estática, com `index.html`, `app.js`, `style.css` e `backend-config.js`. Sirva os arquivos por HTTP:
+## Experimentar localmente
+
+O site é estático e requer a API remota para obter partidas reais:
 
 ```bash
+git clone https://github.com/HelioConde/lol-loss-explorer.git
+cd lol-loss-explorer
 python -m http.server 8000
 ```
 
-Abra `http://localhost:8000`. O acesso a dados reais exige disponibilidade do backend gamer e das APIs Riot.
+Abra `http://localhost:8000`. Para as verificações existentes:
 
-## Qualidade
+```bash
+npm install
+npm run check
+npm run test:e2e
+```
 
-`npm install` prepara dependências de QA. O script `npm run check` inclui verificações estáticas e testes declarados no projeto.
+Este repositório contém `app.js`, `backend-config.js`, `index.html`, `style.css` e páginas informativas. A chave privada Riot deve permanecer no servidor.
 
-## Interpretação responsável
+## Estado e evolução
 
-**Correlação não é causalidade.** Diferenças entre derrotas e vitórias não provam por que uma partida foi perdida e não substituem análise de contexto, mapa, draft e decisões.
+**MVP experimental.** Prioridades: comparar com mais contas e modos de jogo, revisar comportamento mobile, assegurar interpretação clara dos dados e conferir a API em produção. Não há promessa de coaching automático nem previsão de vitórias.
 
-Projeto independente, não oficial, sem vínculo com Riot Games. Autor: [Hélio Conde](https://github.com/HelioConde).
+Projeto independente, não endossado pela Riot Games. Desenvolvido por [Hélio Conde](https://github.com/HelioConde).
